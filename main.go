@@ -1,14 +1,24 @@
 package main
 
-import "github.com/kataras/iris/v12"
+import (
+	"github.com/kataras/iris/v12"
+	"log"
+	"op-panel/models"
+	"op-panel/service"
+)
 
 func main() {
+	models.NewDB()
+	sc := service.GetSystemConfig()
+	log.Println("Address : http://localhost" + sc.Port + sc.Entry)
 	app := iris.New()
-	app.Get("/", func(c iris.Context) {
+
+	v1 := app.Party(sc.Entry)
+	v1.Get("/", func(c iris.Context) {
 		c.JSON(iris.Map{
 			"code": 200,
 			"msg":  "success",
 		})
 	})
-	app.Listen(":8000")
+	app.Listen(sc.Port)
 }
