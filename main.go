@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"github.com/kataras/iris/v12"
-	"log"
 	"op-panel/models"
 	"op-panel/service"
 )
@@ -10,7 +10,10 @@ import (
 func main() {
 	models.NewDB()
 	sc := service.GetSystemConfig()
-	log.Println("Address : http://localhost" + sc.Port + sc.Entry)
+	ub := service.InitUserConfig()
+	fmt.Println("Address : http://localhost" + sc.Port + sc.Entry)
+	fmt.Println("Username : " + ub.Name)
+	fmt.Println("Password : " + ub.Password)
 	app := iris.New()
 
 	v1 := app.Party(sc.Entry)
@@ -20,5 +23,6 @@ func main() {
 			"msg":  "success",
 		})
 	})
+	v1.Post("/login", service.Login)
 	app.Listen(sc.Port)
 }

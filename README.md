@@ -19,3 +19,5 @@ go get -u gorm.io/driver/sqlite
 - [ ] 任务管理
 - [ ] 系统配置
   - [x] 初始化默认配置
+- [ ] 其他
+  - [x] 登录
