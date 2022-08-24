@@ -2,9 +2,12 @@ package service
 
 import (
 	"encoding/json"
+	"github.com/kataras/iris/v12"
+	"log"
 	"op-panel/define"
 	"op-panel/helper"
 	"op-panel/models"
+	"syscall"
 )
 
 func getDefaultSystemConfig() *define.SystemConfig {
@@ -57,4 +60,53 @@ func InitUserConfig() *define.UserBasic {
 		panic("[UNMARSHAL ERROR] : " + err.Error())
 	}
 	return ub
+}
+
+// UpdateSystemConfig 修改系统配置
+func UpdateSystemConfig(c iris.Context) {
+	var (
+		port  = c.PostValue("port")
+		entry = c.PostValue("entry")
+		cb    = new(models.ConfigBasic)
+		sc    = new(define.SystemConfig)
+	)
+	// 获取现用配置
+	err := models.DB.Where("key = 'system'").First(cb).Error
+	if err != nil {
+		log.Printf("[DB ERROR] : %v\n", err)
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常" + err.Error(),
+		})
+		return
+	}
+	json.Unmarshal([]byte(cb.Value), sc)
+
+	// 设置新的配置
+	if port != "" {
+		sc.Port = ":" + port
+	}
+	if entry != "" {
+		sc.Entry = "/" + entry
+	}
+	scByte, _ := json.Marshal(sc)
+
+	// 更新配置
+	err = models.DB.Model(new(models.ConfigBasic)).Where("key = 'system'").Update("value", string(scByte)).Error
+	if err != nil {
+		log.Printf("[DB ERROR] : %v\n", err)
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常" + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(iris.Map{
+		"code": 200,
+		"msg":  "修改成功",
+	})
+
+	// 重启服务
+	syscall.Kill(define.PID, syscall.SIGINT)
 }

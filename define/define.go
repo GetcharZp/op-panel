@@ -16,4 +16,7 @@ type UserClaim struct {
 	jwt.RegisteredClaims
 }
 
-var Key = []byte("op-panel")
+var (
+	Key = []byte("op-panel")
+	PID int
+)
