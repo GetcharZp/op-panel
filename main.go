@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"op-panel/define"
 	"op-panel/models"
+	"op-panel/router"
 	"op-panel/service"
 	"os"
 	"os/signal"
@@ -26,18 +27,7 @@ func main() {
 	app := iris.New()
 
 	v1 := app.Party(sc.Entry)
-	v1.Get("/", func(c iris.Context) {
-		c.JSON(iris.Map{
-			"code": 200,
-			"msg":  "success",
-		})
-	})
-	v1.Post("/login", service.Login)
-
-	// 需要认证操作的分组
-	v2 := v1.Party("/sys")
-	// 修改系统配置
-	v2.Put("/systemConfig", service.UpdateSystemConfig)
+	router.Router(v1)
 
 	run := make(chan struct{})
 	go func() {

@@ -2,12 +2,17 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/disk"
+	"github.com/shirou/gopsutil/mem"
 	"log"
 	"op-panel/define"
 	"op-panel/helper"
 	"op-panel/models"
 	"syscall"
+	"time"
 )
 
 func getDefaultSystemConfig() *define.SystemConfig {
@@ -109,4 +114,36 @@ func UpdateSystemConfig(c iris.Context) {
 
 	// 重启服务
 	syscall.Kill(define.PID, syscall.SIGINT)
+}
+
+// SystemState 获取系统状态
+func SystemState(c iris.Context) {
+	var (
+		cpuUsedPercent  float64
+		memUsedPercent  float64
+		diskUsed        uint64
+		diskUsedPercent float64
+	)
+	// cpu
+	cpuPercents, _ := cpu.Percent(time.Second, true)
+	for _, percent := range cpuPercents {
+		cpuUsedPercent += percent
+	}
+	cpuUsedPercent /= float64(len(cpuPercents))
+	// mem
+	vms, _ := mem.VirtualMemory()
+	memUsedPercent = vms.UsedPercent
+	// disk
+	partitions, _ := disk.Partitions(true)
+	for _, partition := range partitions {
+		us, _ := disk.Usage(partition.Mountpoint)
+		diskUsed += us.Used
+	}
+	allUsage, _ := disk.Usage("/")
+	diskUsedPercent = float64(diskUsed) / float64(allUsage.Total) * 100
+	c.JSON(iris.Map{
+		"cpu_used_percent":  fmt.Sprintf("%.2f", cpuUsedPercent),
+		"mem_used_percent":  fmt.Sprintf("%.2f", memUsedPercent),
+		"disk_used_percent": fmt.Sprintf("%.2f", diskUsedPercent),
+	})
 }
