@@ -10,15 +10,20 @@ go get -u github.com/golang-jwt/jwt/v4
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/sqlite
 go get github.com/shirou/gopsutil
+go get github.com/robfig/cron/v3
 ```
 
 ## 系统模块
 
 - [ ] 首页
-  - [ ] 系统状态
+  - [x] 系统状态
 - [ ] 网站管理
 - [ ] 软件管理
 - [ ] 任务管理
+  - [ ] 定时任务
+  - [ ] 任务列表
+  - [ ] 新增任务
+  - [ ] 修改任务
 - [x] 系统配置
   - [x] 初始化默认配置
   - [x] 修改系统配置
