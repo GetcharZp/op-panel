@@ -24,8 +24,11 @@ func main() {
 	fmt.Println("Address : http://localhost" + sc.Port + sc.Entry)
 	fmt.Println("Username : " + ub.Name)
 	fmt.Println("Password : " + ub.Password)
-	app := iris.New()
 
+	// 定时任务
+	go service.Cron()
+
+	app := iris.New()
 	v1 := app.Party(sc.Entry)
 	router.Router(v1)
 

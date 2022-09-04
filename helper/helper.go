@@ -1,10 +1,16 @@
 package helper
 
 import (
+	"bufio"
+	"bytes"
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"log"
 	"math/rand"
 	"op-panel/define"
+	"os"
+	"os/exec"
+	"path"
 	"time"
 )
 
@@ -51,4 +57,36 @@ func If(bo bool, a, b interface{}) interface{} {
 		return a
 	}
 	return b
+}
+
+func RunShell(shellPath, logPath string) {
+	// 分配权限 0777
+	cmdChmod := exec.Command("sh", "-c", "chmod +x "+shellPath)
+	var errChmod bytes.Buffer
+	cmdChmod.Stderr = &errChmod
+	if err := cmdChmod.Run(); err != nil {
+		log.Println("[CHMOD ERROR] : " + err.Error())
+	}
+	// 打印当前时间 & 追加日志
+	f, err := os.OpenFile(logPath, os.O_WRONLY|os.O_APPEND, 0666)
+	if errors.Is(err, os.ErrNotExist) {
+		os.MkdirAll(path.Dir(logPath), 0777)
+		f, err = os.Create(logPath)
+		if err != nil {
+			log.Fatalln("[CREATE ERROR] : " + err.Error())
+		}
+	}
+	w := bufio.NewWriter(f)
+	w.WriteString(time.Now().Format("2006-01-02 15:04:05") + "\n")
+	w.Flush()
+
+	// 运行 & 打印追加日志
+	cmdShell := exec.Command("sh", "-c", "nohup "+shellPath+" >> "+logPath+" 2>&1 &")
+	var outShell, errShell bytes.Buffer
+	cmdShell.Stdout = &outShell
+	cmdShell.Stderr = &errShell
+	if err := cmdShell.Run(); err != nil {
+		log.Println("[SHELL ERROR] : "+err.Error()+" ErrShell : ", errShell.String())
+	}
+	log.Println(outShell.String())
 }
