@@ -20,4 +20,7 @@ func Router(v1 iris.Party) {
 	v2.Put("/systemConfig", service.UpdateSystemConfig)
 	// 系统状态
 	v2.Get("/systemState", service.SystemState)
+
+	// 任务列表
+	v2.Get("/taskList", service.TaskList)
 }

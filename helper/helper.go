@@ -45,3 +45,10 @@ func ParseToken(token string) error {
 	}
 	return nil
 }
+
+func If(bo bool, a, b interface{}) interface{} {
+	if bo {
+		return a
+	}
+	return b
+}

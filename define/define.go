@@ -17,6 +17,7 @@ type UserClaim struct {
 }
 
 var (
-	Key = []byte("op-panel")
-	PID int
+	Key      = []byte("op-panel")
+	PID      int
+	PageSize = 20
 )

@@ -12,7 +12,7 @@ func NewDB() {
 	if err != nil {
 		panic("[OPEN DB ERROR] : " + err.Error())
 	}
-	err = db.AutoMigrate(&ConfigBasic{})
+	err = db.AutoMigrate(&ConfigBasic{}, &TaskBasic{})
 	if err != nil {
 		panic("[MIGRATE ERROR] : " + err.Error())
 	}
