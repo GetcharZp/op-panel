@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	uuid "github.com/satori/go.uuid"
 	"log"
 	"math/rand"
 	"op-panel/define"
@@ -89,4 +90,8 @@ func RunShell(shellPath, logPath string) {
 		log.Println("[SHELL ERROR] : "+err.Error()+" ErrShell : ", errShell.String())
 	}
 	log.Println(outShell.String())
+}
+
+func GetUUID() string {
+	return uuid.NewV4().String()
 }

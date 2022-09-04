@@ -23,4 +23,5 @@ func Router(v1 iris.Party) {
 
 	// 任务列表
 	v2.Get("/taskList", service.TaskList)
+	v2.Post("/taskAdd", service.TaskAdd)
 }

@@ -1,11 +1,16 @@
 package service
 
 import (
+	"bufio"
+	"errors"
 	"github.com/kataras/iris/v12"
 	"log"
 	"op-panel/define"
 	"op-panel/helper"
 	"op-panel/models"
+	"os"
+	"path"
+	"syscall"
 )
 
 func TaskList(c iris.Context) {
@@ -37,4 +42,56 @@ func TaskList(c iris.Context) {
 			"count": cnt,
 		},
 	})
+}
+
+func TaskAdd(c iris.Context) {
+	name := c.PostValue("name")
+	spec := c.PostValue("spec")
+	data := c.PostValue("data")
+	if name == "" || spec == "" || data == "" {
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "必填参不能为空",
+		})
+		return
+	}
+	shellName := helper.GetUUID()
+	tb := &models.TaskBasic{
+		Name:      name,
+		Spec:      spec,
+		ShellPath: define.ShellDir + "/" + shellName + ".sh",
+		LogPath:   define.LogDir + "/" + shellName + ".log",
+	}
+	err := models.DB.Create(tb).Error
+	if err != nil {
+		log.Println("[DB ERROR] : " + err.Error())
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常 : " + err.Error(),
+		})
+		return
+	}
+	f, err := os.Create(tb.ShellPath)
+	if errors.Is(err, os.ErrNotExist) {
+		os.MkdirAll(path.Dir(tb.ShellPath), 0777)
+		f, err = os.Create(tb.ShellPath)
+		if err != nil {
+			log.Println("[CREATE FILE ERROR] : " + err.Error())
+			c.JSON(iris.Map{
+				"code": -1,
+				"msg":  "系统异常 : " + err.Error(),
+			})
+			return
+		}
+	}
+	w := bufio.NewWriter(f)
+	w.WriteString(data)
+	w.Flush()
+
+	c.JSON(iris.Map{
+		"code": 200,
+		"msg":  "新增成功",
+	})
+
+	syscall.Kill(define.PID, syscall.SIGINT)
 }

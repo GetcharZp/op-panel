@@ -20,4 +20,6 @@ var (
 	Key      = []byte("op-panel")
 	PID      int
 	PageSize = 20
+	ShellDir = "./shell"
+	LogDir   = "./log"
 )

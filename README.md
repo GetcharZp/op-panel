@@ -11,6 +11,7 @@ go get -u gorm.io/gorm
 go get -u gorm.io/driver/sqlite
 go get github.com/shirou/gopsutil
 go get github.com/robfig/cron/v3
+go get github.com/satori/go.uuid
 ```
 
 ## 系统模块
@@ -20,7 +21,7 @@ go get github.com/robfig/cron/v3
 - [ ] 网站管理
 - [ ] 软件管理
 - [ ] 任务管理
-  - [ ] 定时任务
+  - [x] 定时任务
   - [x] 任务列表
   - [ ] 新增任务
   - [ ] 修改任务
