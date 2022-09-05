@@ -21,7 +21,9 @@ func Router(v1 iris.Party) {
 	// 系统状态
 	v2.Get("/systemState", service.SystemState)
 
-	// 任务列表
+	// 任务管理
 	v2.Get("/taskList", service.TaskList)
 	v2.Post("/taskAdd", service.TaskAdd)
+	v2.Put("/taskEdit", service.TaskEdit)
+	v2.Delete("/taskDelete", service.TaskDelete)
 }

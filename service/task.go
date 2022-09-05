@@ -95,3 +95,83 @@ func TaskAdd(c iris.Context) {
 
 	syscall.Kill(define.PID, syscall.SIGINT)
 }
+
+func TaskEdit(c iris.Context) {
+	id := c.PostValue("id")
+	name := c.PostValue("name")
+	spec := c.PostValue("spec")
+	data := c.PostValue("data")
+	if id == "" || name == "" || spec == "" || data == "" {
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "必填参不能为空",
+		})
+		return
+	}
+
+	tb := new(models.TaskBasic)
+	err := models.DB.Where("id = ?", id).First(tb).Error
+	if err != nil {
+		log.Println("[DB ERROR] : " + err.Error())
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常 : " + err.Error(),
+		})
+		return
+	}
+	tb.Name = name
+	tb.Spec = spec
+	err = models.DB.Where("id = ?", id).Updates(tb).Error
+	if err != nil {
+		log.Println("[DB ERROR] : " + err.Error())
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常 : " + err.Error(),
+		})
+		return
+	}
+
+	f, err := os.Create(tb.ShellPath)
+	if errors.Is(err, os.ErrNotExist) {
+		os.MkdirAll(path.Dir(tb.ShellPath), 0777)
+		f, err = os.Create(tb.ShellPath)
+		if err != nil {
+			log.Println("[CREATE FILE ERROR] : " + err.Error())
+			c.JSON(iris.Map{
+				"code": -1,
+				"msg":  "系统异常 : " + err.Error(),
+			})
+			return
+		}
+	}
+	w := bufio.NewWriter(f)
+	w.WriteString(data)
+	w.Flush()
+
+	c.JSON(iris.Map{
+		"code": 200,
+		"msg":  "编辑成功",
+	})
+
+	syscall.Kill(define.PID, syscall.SIGINT)
+}
+
+func TaskDelete(c iris.Context) {
+	id := c.PostValue("id")
+	err := models.DB.Where("id = ?", id).Delete(new(models.TaskBasic)).Error
+	if err != nil {
+		log.Println("[DB ERROR] : " + err.Error())
+		c.JSON(iris.Map{
+			"code": -1,
+			"msg":  "系统异常 : " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(iris.Map{
+		"code": 200,
+		"msg":  "删除成功",
+	})
+
+	syscall.Kill(define.PID, syscall.SIGINT)
+}

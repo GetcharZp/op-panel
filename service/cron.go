@@ -7,7 +7,7 @@ import (
 	"op-panel/models"
 )
 
-func Cron() {
+func Cron(exit chan struct{}) {
 	c := cron.New(cron.WithSeconds())
 	list := make([]*models.TaskBasic, 0)
 	err := models.DB.Find(&list).Error
@@ -26,5 +26,8 @@ func Cron() {
 
 	c.Start()
 	defer c.Stop()
-	select {}
+	select {
+	case <-exit:
+		log.Println("Cron Exit")
+	}
 }

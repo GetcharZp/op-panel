@@ -26,7 +26,8 @@ func main() {
 	fmt.Println("Password : " + ub.Password)
 
 	// 定时任务
-	go service.Cron()
+	cron := make(chan struct{})
+	go service.Cron(cron)
 
 	app := iris.New()
 	v1 := app.Party(sc.Entry)
@@ -42,6 +43,7 @@ func main() {
 			ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
 			defer cancel()
 			app.Shutdown(ctx)
+			cron <- struct{}{}
 			go main()
 		}
 	}()
