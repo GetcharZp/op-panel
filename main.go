@@ -3,7 +3,7 @@ package main
 import (
 	stdContext "context"
 	"fmt"
-	"github.com/kataras/iris/v12"
+	"github.com/labstack/echo/v4"
 	"op-panel/define"
 	"op-panel/models"
 	"op-panel/router"
@@ -29,8 +29,8 @@ func main() {
 	cron := make(chan struct{})
 	go service.Cron(cron)
 
-	app := iris.New()
-	v1 := app.Party(sc.Entry)
+	e := echo.New()
+	v1 := e.Group(sc.Entry)
 	router.Router(v1)
 
 	run := make(chan struct{})
@@ -42,11 +42,11 @@ func main() {
 			timeout := 10 * time.Second
 			ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
 			defer cancel()
-			app.Shutdown(ctx)
+			e.Shutdown(ctx)
 			cron <- struct{}{}
 			go main()
 		}
 	}()
-	app.Listen(sc.Port, iris.WithoutInterruptHandler)
+	e.Logger.Print(e.Start(sc.Port))
 	<-run
 }

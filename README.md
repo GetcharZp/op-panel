@@ -4,8 +4,9 @@
 
 ## 扩展安装
 
+<del>go get github.com/kataras/iris/v12@master</del>
 ```text
-go get github.com/kataras/iris/v12@master
+go get github.com/labstack/echo/v4
 go get -u github.com/golang-jwt/jwt/v4
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/sqlite

@@ -1,21 +1,21 @@
 package middleware
 
 import (
-	"github.com/kataras/iris/v12"
+	"github.com/labstack/echo/v4"
+	"net/http"
 	"op-panel/helper"
 )
 
-func Auth() iris.Handler {
-	return func(c iris.Context) {
-		token := c.GetHeader("toke")
+func Auth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Request().Header.Get("token")
 		err := helper.ParseToken(token)
 		if err != nil {
-			c.JSON(iris.Map{
+			return c.JSON(http.StatusOK, echo.Map{
 				"code": -1,
 				"msg":  "身份认证不通过",
 			})
-			return
 		}
-		c.Next()
+		return next(c)
 	}
 }

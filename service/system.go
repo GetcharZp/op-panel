@@ -3,11 +3,12 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kataras/iris/v12"
+	"github.com/labstack/echo/v4"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/disk"
 	"github.com/shirou/gopsutil/mem"
 	"log"
+	"net/http"
 	"op-panel/define"
 	"op-panel/helper"
 	"op-panel/models"
@@ -68,10 +69,10 @@ func InitUserConfig() *define.UserBasic {
 }
 
 // UpdateSystemConfig 修改系统配置
-func UpdateSystemConfig(c iris.Context) {
+func UpdateSystemConfig(c echo.Context) error {
 	var (
-		port  = c.PostValue("port")
-		entry = c.PostValue("entry")
+		port  = c.FormValue("port")
+		entry = c.FormValue("entry")
 		cb    = new(models.ConfigBasic)
 		sc    = new(define.SystemConfig)
 	)
@@ -79,11 +80,10 @@ func UpdateSystemConfig(c iris.Context) {
 	err := models.DB.Where("key = 'system'").First(cb).Error
 	if err != nil {
 		log.Printf("[DB ERROR] : %v\n", err)
-		c.JSON(iris.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"code": -1,
 			"msg":  "系统异常" + err.Error(),
 		})
-		return
 	}
 	json.Unmarshal([]byte(cb.Value), sc)
 
@@ -100,24 +100,24 @@ func UpdateSystemConfig(c iris.Context) {
 	err = models.DB.Model(new(models.ConfigBasic)).Where("key = 'system'").Update("value", string(scByte)).Error
 	if err != nil {
 		log.Printf("[DB ERROR] : %v\n", err)
-		c.JSON(iris.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"code": -1,
 			"msg":  "系统异常" + err.Error(),
 		})
-		return
 	}
 
-	c.JSON(iris.Map{
+	c.JSON(http.StatusOK, echo.Map{
 		"code": 200,
 		"msg":  "修改成功",
 	})
 
 	// 重启服务
 	syscall.Kill(define.PID, syscall.SIGINT)
+	return nil
 }
 
 // SystemState 获取系统状态
-func SystemState(c iris.Context) {
+func SystemState(c echo.Context) error {
 	var (
 		cpuUsedPercent  float64
 		memUsedPercent  float64
@@ -141,7 +141,7 @@ func SystemState(c iris.Context) {
 	}
 	allUsage, _ := disk.Usage("/")
 	diskUsedPercent = float64(diskUsed) / float64(allUsage.Total) * 100
-	c.JSON(iris.Map{
+	return c.JSON(http.StatusOK, echo.Map{
 		"cpu_used_percent":  fmt.Sprintf("%.2f", cpuUsedPercent),
 		"mem_used_percent":  fmt.Sprintf("%.2f", memUsedPercent),
 		"disk_used_percent": fmt.Sprintf("%.2f", diskUsedPercent),
