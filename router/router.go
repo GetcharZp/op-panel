@@ -28,4 +28,7 @@ func Router(v1 *echo.Group) {
 	v2.POST("/taskAdd", service.TaskAdd)
 	v2.PUT("/taskEdit", service.TaskEdit)
 	v2.DELETE("/taskDelete", service.TaskDelete)
+
+	// 软件管理
+	v2.GET("/softList", service.SoftList)
 }
