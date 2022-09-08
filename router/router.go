@@ -31,4 +31,5 @@ func Router(v1 *echo.Group) {
 
 	// 软件管理
 	v2.GET("/softList", service.SoftList)
+	v2.POST("/softOperation", service.SoftOperation)
 }
