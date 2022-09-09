@@ -1,8 +1,10 @@
 # op-panel
 
-> 基于Echo、Gorm的运维面板
+> 后端：Echo、Gorm的运维面板
+> 
+> 前端：vue-element-admin
 
-## 扩展安装
+## golang 扩展安装
 
 <del>go get github.com/kataras/iris/v12@master</del>
 ```text
@@ -13,6 +15,15 @@ go get -u gorm.io/driver/sqlite
 go get github.com/shirou/gopsutil
 go get github.com/robfig/cron/v3
 go get github.com/satori/go.uuid
+```
+
+## vue-element-admin 安装
+
+```text
+git clone https://gitee.com/PanJiaChen/vue-element-admin.git
+cd vue-element-admin
+npm install
+npm run dev
 ```
 
 ## 系统模块
