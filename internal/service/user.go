@@ -11,9 +11,9 @@ import (
 )
 
 func Login(c echo.Context) error {
-	name := c.FormValue("name")
+	username := c.FormValue("username")
 	password := c.FormValue("password")
-	if name == "" || password == "" {
+	if username == "" || password == "" {
 		return c.JSON(http.StatusOK, echo.Map{
 			"code": -1,
 			"msg":  "用户名或密码不能为空",
@@ -36,7 +36,7 @@ func Login(c echo.Context) error {
 	}
 	ub := new(define.UserBasic)
 	json.Unmarshal([]byte(cb.Value), ub)
-	if ub.Password != password || ub.Name != name {
+	if ub.Password != password || ub.Name != username {
 		return c.JSON(http.StatusOK, echo.Map{
 			"code": -1,
 			"msg":  "用户名或密码不正确",

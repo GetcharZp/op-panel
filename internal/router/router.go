@@ -8,6 +8,7 @@ import (
 )
 
 func Router(v1 *echo.Group) {
+	v1.Use(middleware.Cors())
 	v1.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, echo.Map{
 			"code": 200,
