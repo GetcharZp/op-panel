@@ -142,8 +142,12 @@ func SystemState(c echo.Context) error {
 	allUsage, _ := disk.Usage("/")
 	diskUsedPercent = float64(diskUsed) / float64(allUsage.Total) * 100
 	return c.JSON(http.StatusOK, echo.Map{
-		"cpu_used_percent":  fmt.Sprintf("%.2f", cpuUsedPercent),
-		"mem_used_percent":  fmt.Sprintf("%.2f", memUsedPercent),
-		"disk_used_percent": fmt.Sprintf("%.2f", diskUsedPercent),
+		"code": 200,
+		"msg":  "请求成功",
+		"data": echo.Map{
+			"cpu_used_percent":  fmt.Sprintf("%.2f", cpuUsedPercent),
+			"mem_used_percent":  fmt.Sprintf("%.2f", memUsedPercent),
+			"disk_used_percent": fmt.Sprintf("%.2f", diskUsedPercent),
+		},
 	})
 }
