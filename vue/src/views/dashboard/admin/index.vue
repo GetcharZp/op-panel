@@ -42,16 +42,20 @@ export default {
       disk: {
         value: 0,
         name: 'DISK'
-      }
+      },
+      currentTimer: null
     }
   },
   mounted() {
     this.fetchData()
   },
+  beforeDestroy() {
+    clearInterval(this.currentTimer)
+  },
   methods: {
     fetchData() {
       const _this = this
-      setInterval(function() {
+      this.currentTimer = setInterval(function() {
         state().then(response => {
           _this.cpu.value = response.data.cpu_used_percent
           _this.mem.value = response.data.mem_used_percent

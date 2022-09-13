@@ -12,7 +12,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		err := helper.ParseToken(token)
 		if err != nil {
 			return c.JSON(http.StatusOK, echo.Map{
-				"code": -1,
+				"code": 50014,
 				"msg":  "身份认证不通过",
 			})
 		}
