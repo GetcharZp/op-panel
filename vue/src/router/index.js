@@ -84,14 +84,14 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/documentation',
+    path: '/software',
     component: Layout,
     children: [
       {
         path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+        component: () => import('@/views/software/index'),
+        name: 'Software',
+        meta: { title: 'Software', icon: 'component' }
       }
     ]
   },
