@@ -6,3 +6,11 @@ export function softList(data) {
     method: 'get'
   })
 }
+
+export function softOperation(data) {
+  return request({
+    url: '/sys/softOperation',
+    method: 'post',
+    data
+  })
+}
