@@ -26,7 +26,7 @@ func TaskList(c echo.Context) error {
 	size = helper.If(size == 0, define.PageSize, size).(int)
 	index = helper.If(index == 0, 1, index).(int)
 
-	err := models.DB.Model(new(models.TaskBasic)).Count(&cnt).Offset((1 - index) * size).Limit(size).Find(&tb).Error
+	err := models.DB.Model(new(models.TaskBasic)).Count(&cnt).Offset((index - 1) * size).Limit(size).Find(&tb).Error
 	if err != nil {
 		log.Println("[DB ERROR]" + err.Error())
 		return c.JSON(http.StatusOK, echo.Map{
