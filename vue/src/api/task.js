@@ -7,3 +7,11 @@ export function taskList(params) {
     params: params
   })
 }
+
+export function taskAdd(data) {
+  return request({
+    url: '/sys/taskAdd',
+    method: 'post',
+    data
+  })
+}
