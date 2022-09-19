@@ -15,3 +15,11 @@ export function taskAdd(data) {
     data
   })
 }
+
+export function taskDelete(params) {
+  return request({
+    url: '/sys/taskDelete',
+    method: 'delete',
+    params: params
+  })
+}

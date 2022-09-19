@@ -42,7 +42,11 @@
       />
       <el-table-column
         label="操作"
-      />
+      >
+        <template slot-scope="scope">
+          <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <div style="margin-top: 15px">
       <el-pagination
@@ -57,7 +61,7 @@
 
 <script>
 
-import { taskList, taskAdd } from '@/api/task'
+import { taskList, taskAdd, taskDelete } from '@/api/task'
 import { Message } from 'element-ui'
 
 export default {
@@ -88,6 +92,15 @@ export default {
     },
     addTaskSubmit() {
       taskAdd(this.addTaskForm).then(response => {
+        Message({
+          message: response.msg,
+          type: 'success',
+          duration: 3 * 1000
+        })
+      })
+    },
+    handleDelete(row) {
+      taskDelete({ id: row.ID }).then(response => {
         Message({
           message: response.msg,
           type: 'success',

@@ -153,7 +153,13 @@ func TaskEdit(c echo.Context) error {
 }
 
 func TaskDelete(c echo.Context) error {
-	id := c.FormValue("id")
+	id := c.QueryParam("id")
+	if id == "" {
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "必填参不能为空",
+		})
+	}
 	err := models.DB.Where("id = ?", id).Delete(new(models.TaskBasic)).Error
 	if err != nil {
 		log.Println("[DB ERROR] : " + err.Error())
