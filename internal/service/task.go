@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"github.com/labstack/echo/v4"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"op-panel/define"
@@ -14,6 +15,39 @@ import (
 	"strconv"
 	"syscall"
 )
+
+func TaskDetail(c echo.Context) error {
+	id := c.QueryParam("id")
+	if id == "" {
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "必填参不能为空",
+		})
+	}
+	data := new(TaskDetailResponse)
+	err := models.DB.Model(new(models.TaskBasic)).Select("id, name, spec, shell_path data").Where("id = ?", id).Find(data).Error
+	if err != nil {
+		log.Println("[DB ERROR]" + err.Error())
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "系统异常" + err.Error(),
+		})
+	}
+	b, err := ioutil.ReadFile(data.Data)
+	if err != nil {
+		log.Println("[READ_FILE ERROR]" + err.Error())
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "系统异常" + err.Error(),
+		})
+	}
+	data.Data = string(b)
+	return c.JSON(http.StatusOK, echo.Map{
+		"code": 200,
+		"msg":  "加载成功",
+		"data": data,
+	})
+}
 
 func TaskList(c echo.Context) error {
 	var (

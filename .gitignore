@@ -16,6 +16,8 @@
 
 .idea
 .DS_Store
-op-panel.db
 
-log
+internal/op-panel.db
+
+internal/log
+internal/shell
