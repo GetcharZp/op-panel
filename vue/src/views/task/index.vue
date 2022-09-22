@@ -23,6 +23,28 @@
       </el-form>
     </el-dialog>
 
+    <el-dialog
+      title="编辑任务"
+      :visible.sync="editTaskDialogVisible"
+      width="55%"
+    >
+      <el-form ref="form" :model="editTaskForm" label-width="80px">
+        <el-form-item label="任务名称" label-width="100px">
+          <el-input v-model="editTaskForm.name" />
+        </el-form-item>
+        <el-form-item label="Spec" label-width="100px">
+          <el-input v-model="editTaskForm.spec" />
+        </el-form-item>
+        <el-form-item label="脚本" label-width="100px">
+          <el-input v-model="editTaskForm.data" type="textarea" rows="5" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="editTaskSubmit">确认</el-button>
+          <el-button @click="editTaskDialogVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
     <el-table
       :data="list"
       border
@@ -44,6 +66,7 @@
         label="操作"
       >
         <template slot-scope="scope">
+          <el-button type="text" @click="handleEdit(scope.row)">修改</el-button>
           <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -61,7 +84,7 @@
 
 <script>
 
-import { taskList, taskAdd, taskDelete } from '@/api/task'
+import { taskDetail, taskList, taskAdd, taskDelete, taskEdit } from '@/api/task'
 import { Message } from 'element-ui'
 
 export default {
@@ -73,7 +96,9 @@ export default {
       list: [],
       count: 0,
       addTaskDialogVisible: false,
-      addTaskForm: {}
+      addTaskForm: {},
+      editTaskDialogVisible: false,
+      editTaskForm: {}
     }
   },
   mounted() {
@@ -101,6 +126,21 @@ export default {
     },
     handleDelete(row) {
       taskDelete({ id: row.ID }).then(response => {
+        Message({
+          message: response.msg,
+          type: 'success',
+          duration: 3 * 1000
+        })
+      })
+    },
+    handleEdit(row) {
+      this.editTaskDialogVisible = true
+      taskDetail({ id: row.ID }).then(response => {
+        this.editTaskForm = response.data
+      })
+    },
+    editTaskSubmit() {
+      taskEdit(this.editTaskForm).then(response => {
         Message({
           message: response.msg,
           type: 'success',
