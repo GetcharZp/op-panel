@@ -24,6 +24,9 @@ func Router(v1 *echo.Group) {
 	// 系统状态
 	v2.GET("/systemState", service2.SystemState)
 
+	// 网站管理
+	v2.GET("/webList", service2.WebList)
+
 	// 任务管理
 	v2.GET("/taskList", service2.TaskList)
 	v2.GET("/taskDetail", service2.TaskDetail)
