@@ -22,5 +22,5 @@ var (
 	PageSize      = 20
 	ShellDir      = "./shell"
 	LogDir        = "./log"
-	DefaultWebDir = "/home/wwwroot"
+	DefaultWebDir = "/home/wwwroot/"
 )

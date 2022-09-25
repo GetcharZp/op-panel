@@ -29,7 +29,7 @@ func GenerateToken() (string, error) {
 	tokenStruct := jwt.NewWithClaims(jwt.SigningMethodHS256, &define.UserClaim{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: &jwt.NumericDate{
-				Time: time.Now().Add(time.Hour * 24),
+				Time: time.Now().Add(time.Hour * 24 * 30),
 			},
 		},
 	})
