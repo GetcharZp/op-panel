@@ -17,10 +17,11 @@ type UserClaim struct {
 }
 
 var (
-	Key           = []byte("op-panel")
-	PID           int
-	PageSize      = 20
-	ShellDir      = "./shell"
-	LogDir        = "./log"
-	DefaultWebDir = "/home/wwwroot/"
+	Key            = []byte("op-panel")
+	PID            int
+	PageSize       = 20
+	ShellDir       = "./shell"
+	LogDir         = "./log"
+	DefaultWebDir  = "/home/wwwroot/"
+	NginxConfigDir = "/home/nginx/conf/"
 )

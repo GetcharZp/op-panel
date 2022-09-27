@@ -27,6 +27,7 @@ func Router(v1 *echo.Group) {
 	// 网站管理
 	v2.GET("/webList", service2.WebList)
 	v2.POST("/webAdd", service2.WebAdd)
+	v2.PUT("/webEdit", service2.WebEdit)
 
 	// 任务管理
 	v2.GET("/taskList", service2.TaskList)
