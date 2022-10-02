@@ -165,3 +165,26 @@ func WebEdit(c echo.Context) error {
 		"msg":  "编辑成功",
 	})
 }
+
+func WebDelete(c echo.Context) error {
+	identity := c.FormValue("identity")
+	if identity == "" {
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "必填参不能为空",
+		})
+	}
+	err := models.DB.Where("identity = ?", identity).Delete(new(models.WebBasic)).Error
+	if err != nil {
+		log.Println("[DB ERROR] : " + err.Error())
+		return c.JSON(http.StatusOK, echo.Map{
+			"code": -1,
+			"msg":  "系统异常 : " + err.Error(),
+		})
+	}
+	// TODO: 删除nginx配置文件 & 重启nginx加载配置
+	return c.JSON(http.StatusOK, echo.Map{
+		"code": 200,
+		"msg":  "删除成功",
+	})
+}
